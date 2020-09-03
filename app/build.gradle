@@ -66,6 +66,9 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    //Loading
+    implementation 'com.github.ybq:Android-SpinKit:1.1.0'
+
     //RecyclerView
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.45'
 

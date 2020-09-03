@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">7FreshDemo</string>
+
+    <!-- Dialog -->
+    <string name="dialog_default_confirm">确定</string>
+    <string name="dialog_default_cancel">取消</string>
+    <string name="dialog_default_done">我知道了</string>
 </resources>

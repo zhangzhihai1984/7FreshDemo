@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="279dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_common_background"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <TextView
+        android:id="@+id/title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="21dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/text_33"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="弹窗标题"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/content_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:paddingStart="21dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="21dp"
+        android:textColor="@color/text_7B"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="真心的希望为您带来更多乐趣，我们需要您" />
+
+    <LinearLayout
+        android:id="@+id/double_layout"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/cancel_textview"
+            android:layout_width="111dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="21dp"
+            android:background="@drawable/dialog_button_gray_background"
+            android:gravity="center"
+            android:text="@string/dialog_default_cancel"
+            android:textColor="@color/text_7B"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/confirm_textview"
+            android:layout_width="111dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/dialog_button_primary_background"
+            android:gravity="center"
+            android:text="@string/dialog_default_confirm"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/single_layout"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <Button
+            android:id="@+id/done_textview"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="21dp"
+            android:layout_marginEnd="21dp"
+            android:background="@drawable/dialog_button_primary_background"
+            android:text="@string/dialog_default_done"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+
