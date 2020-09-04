@@ -12,4 +12,7 @@
     <!-- Splash -->
     <string name="splash_skip">跳过&#160;&#160;%1$d</string>
 
+    <!-- Main -->
+    <string name="main_add">加入购物车</string>
+
 </resources>
