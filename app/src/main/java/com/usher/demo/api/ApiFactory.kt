@@ -32,77 +32,77 @@ class ApiFactory private constructor() {
 
     init {
         mApiService = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(getClient())
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .build()
-            .create(ApiService::class.java)
+                .baseUrl(BASE_URL)
+                .client(getClient())
+                .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                .build()
+                .create(ApiService::class.java)
     }
 
     private fun getClient(): OkHttpClient = OkHttpClient.Builder()
-        .sslSocketFactory(getSSLSocketFactory(), getTrustManager()[0] as X509TrustManager)
-        .hostnameVerifier(getHostnameVerifier())
-        .protocols(listOf(Protocol.HTTP_1_1))
+            .sslSocketFactory(getSSLSocketFactory(), getTrustManager()[0] as X509TrustManager)
+            .hostnameVerifier(getHostnameVerifier())
+            .protocols(listOf(Protocol.HTTP_1_1))
 //        .addInterceptor(getHeaderInterceptor())
-        .build()
+            .build()
 
     private fun getSSLSocketFactory(): SSLSocketFactory = SSLContext.getInstance("SSL")
-        .apply { init(null, getTrustManager(), SecureRandom()) }.socketFactory
+            .apply { init(null, getTrustManager(), SecureRandom()) }.socketFactory
 
     private fun getTrustManager(): Array<TrustManager> =
-        arrayOf(object : X509TrustManager {
-            @SuppressLint("TrustAllX509TrustManager")
-            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
-            }
+            arrayOf(object : X509TrustManager {
+                @SuppressLint("TrustAllX509TrustManager")
+                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
 
-            @SuppressLint("TrustAllX509TrustManager")
-            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-            }
+                @SuppressLint("TrustAllX509TrustManager")
+                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
 
-            override fun getAcceptedIssuers(): Array<X509Certificate> {
-                return arrayOf()
-            }
-        })
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            })
 
     private fun getHostnameVerifier(): HostnameVerifier = HostnameVerifier { _, _ -> true }
 
     private fun <T> getResultComposer(): ObservableTransformer<T, ResultEntity<T>> =
-        ObservableTransformer { upstream ->
-            upstream.map { resp -> ResultEntity(resp, null) }
-                .onErrorReturn { err ->
-                    var result = ResultEntity<T>(null, ErrorEntity(-1, "网络异常,请检查网络连接!"))
-                    if (err is HttpException) {
-                        err.response()?.errorBody()?.run {
-                            result = ResultEntity(
-                                null,
-                                Gson().fromJson(string(), ErrorEntity::class.java)
-                            )
-                        }
-                    }
+            ObservableTransformer { upstream ->
+                upstream.map { resp -> ResultEntity(resp, null) }
+                        .onErrorReturn { err ->
+                            var result = ResultEntity<T>(null, ErrorEntity(-1, "网络异常,请检查网络连接!"))
+                            if (err is HttpException) {
+                                err.response()?.errorBody()?.run {
+                                    result = ResultEntity(
+                                            null,
+                                            Gson().fromJson(string(), ErrorEntity::class.java)
+                                    )
+                                }
+                            }
 
-                    result
-                }
-        }
+                            result
+                        }
+            }
 
     private fun getBaseResultComposer(): ObservableTransformer<ResponseBody, BaseResultEntity> =
-        ObservableTransformer { upstream ->
-            upstream.map { BaseResultEntity(null) }
-                .onErrorReturn { err ->
-                    var result = BaseResultEntity(ErrorEntity(-1, "网络异常,请检查网络连接!"))
-                    if (err is HttpException) {
-                        err.response()?.errorBody()?.run {
-                            result =
-                                BaseResultEntity(Gson().fromJson(string(), ErrorEntity::class.java))
-                        }
-                    }
+            ObservableTransformer { upstream ->
+                upstream.map { BaseResultEntity(null) }
+                        .onErrorReturn { err ->
+                            var result = BaseResultEntity(ErrorEntity(-1, "网络异常,请检查网络连接!"))
+                            if (err is HttpException) {
+                                err.response()?.errorBody()?.run {
+                                    result =
+                                            BaseResultEntity(Gson().fromJson(string(), ErrorEntity::class.java))
+                                }
+                            }
 
-                    result
-                }
-        }
+                            result
+                        }
+            }
 
     fun getDetail(): Observable<ResultEntity<DetailEntity>> =
-        mApiService.getDetail()
-            .compose(RxUtil.getSchedulerComposer())
-            .compose(getResultComposer())
+            mApiService.getDetail()
+                    .compose(RxUtil.getSchedulerComposer())
+                    .compose(getResultComposer())
 }

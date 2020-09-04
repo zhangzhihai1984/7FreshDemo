@@ -17,10 +17,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 @SuppressLint("Registered")
-open class BaseActivity(
-    contentLayoutId: Int,
-    private val statusBarThemeForDayMode: Theme = Theme.DARK_AUTO
-) : AppCompatActivity(contentLayoutId) {
+open class BaseActivity(contentLayoutId: Int, private val statusBarThemeForDayMode: Theme = Theme.DARK_AUTO) : AppCompatActivity(contentLayoutId) {
     private val mContextMenuSubject = PublishSubject.create<MenuItem>()
     private val mActivityResultSubject = PublishSubject.create<ActivityResult>()
     private var mIsLocalNightMode = false
@@ -73,20 +70,16 @@ open class BaseActivity(
         dismissLoadingDialog()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) =
-        grantResults.find { it == PackageManager.PERMISSION_DENIED }?.let {
-            PermissionUtil.deny()
-            CommonDialog(this)
-                .withContent("未取得应用权限，您将不能使用该功能")
-                .withDialogType(CommonDialog.ButtonType.SINGLE)
-                .show()
-        } ?: run {
-            PermissionUtil.grant()
-        }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) =
+            grantResults.find { it == PackageManager.PERMISSION_DENIED }?.let {
+                PermissionUtil.deny()
+                CommonDialog(this)
+                        .withContent("未取得应用权限，您将不能使用该功能")
+                        .withDialogType(CommonDialog.ButtonType.SINGLE)
+                        .show()
+            } ?: run {
+                PermissionUtil.grant()
+            }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         mContextMenuSubject.onNext(item)
