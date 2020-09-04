@@ -46,6 +46,12 @@
         </activity>
 
         <activity
+            android:name=".MainActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoStatusBarTheme" />
+
+        <activity
             android:name=".CommonWebActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
