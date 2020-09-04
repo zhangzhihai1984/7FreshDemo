@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.usher.demo.util.PermissionUtil
+import com.usher.demo.util.SystemUtil
 import com.usher.demo.widget.CommonDialog
 import com.usher.demo.widget.CustomProgressDialog
 import io.reactivex.rxjava3.core.Observable
@@ -22,6 +23,7 @@ open class BaseActivity(contentLayoutId: Int, private val statusBarThemeForDayMo
     private val mActivityResultSubject = PublishSubject.create<ActivityResult>()
     private var mIsLocalNightMode = false
     private val mLoadingDialog by lazy { CustomProgressDialog(this) }
+    protected val statusBarHeight by lazy { SystemUtil.getStatusBarHeight(this) }
 
     private var lightStatusBarTheme = true
         set(isLight) {

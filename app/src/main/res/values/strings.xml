@@ -5,4 +5,8 @@
     <string name="dialog_default_confirm">确定</string>
     <string name="dialog_default_cancel">取消</string>
     <string name="dialog_default_done">我知道了</string>
+
+    <!-- Splash -->
+    <string name="splash_skip">跳过&#160;&#160;%1$d</string>
+
 </resources>
