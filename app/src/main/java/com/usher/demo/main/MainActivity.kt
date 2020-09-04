@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.google.gson.Gson
 import com.jakewharton.rxbinding4.view.clicks
 import com.usher.demo.CommonWebActivity
@@ -51,7 +52,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
         initCartLayout()
         initExit()
 
-
         ApiFactory.instance.getDetail()
                 .to(RxUtil.autoDispose(this))
                 .subscribe { result ->
@@ -62,37 +62,42 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
     }
 
     private fun initTabView() {
+        val fragmentHides: (transaction: FragmentTransaction, tag: String) -> Observable<Unit> = { transaction, tag ->
+            Observable.fromIterable(mFragmentMap.keys)
+                    .filter { key -> key != tag }
+                    .map { key ->
+                        mFragmentMap[key]?.let { fragment ->
+                            supportFragmentManager.findFragmentByTag(key)?.run {
+                                transaction.hide(fragment)
+                            }
+                        }
+                        Unit
+                    }
+        }
+
+        val fragmentShows: (transaction: FragmentTransaction, tag: String) -> Observable<Unit> = { transaction, tag ->
+            Observable.just(Unit)
+                    .map {
+                        mFragmentMap[tag]?.let { fragment ->
+                            supportFragmentManager.findFragmentByTag(tag)?.run {
+                                transaction.show(fragment)
+                            } ?: transaction.add(R.id.main_content_view, fragment, tag)
+                        }
+                        Unit
+                    }
+        }
+
+        val fragmentNavigates: (transaction: FragmentTransaction, tag: String) -> Observable<Unit> = { transaction, tag ->
+            Observable.concat(fragmentHides(transaction, tag), fragmentShows(transaction, tag))
+                    .doOnComplete { transaction.commitAllowingStateLoss() }
+        }
+
         top_tab_view.navigates()
                 .startWithItem(Constants.TAB_TAG_PRODUCT)
                 .compose(RxUtil.getSchedulerComposer())
+                .switchMap { tag -> fragmentNavigates(supportFragmentManager.beginTransaction(), tag) }
                 .to(RxUtil.autoDispose(this))
-                .subscribe { navigateTab(it) }
-    }
-
-    private fun navigateTab(tag: String) {
-        val transcation = supportFragmentManager.beginTransaction()
-
-        val hide = Observable.fromIterable(mFragmentMap.keys)
-                .filter { it != tag }
-                .filter { null != supportFragmentManager.findFragmentByTag(it) }
-                .map { mFragmentMap[it] }
-                .doOnNext { it?.run { transcation.hide(this) } }
-
-        val show = Observable.fromIterable(mFragmentMap.keys)
-                .filter { it == tag }
-                .map { mFragmentMap[it] }
-                .doOnNext {
-                    it?.run {
-                        supportFragmentManager.findFragmentByTag(tag)?.run {
-                            transcation.show(it)
-                        } ?: transcation.add(R.id.main_content_view, this, tag)
-                    }
-                }
-
-        Observable.concat(hide, show)
-                .doOnComplete { transcation.commitAllowingStateLoss() }
-                .to(RxUtil.autoDispose(this))
-                .subscribe()
+                .subscribe {}
     }
 
     private fun initCartLayout() {
