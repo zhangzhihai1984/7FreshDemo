@@ -6,6 +6,14 @@ import java.io.File
 
 object Constants {
     /**
+     * Tab Tag
+     */
+    const val TAB_TAG_PRODUCT = "TAB_TAG_PRODUCT"
+    const val TAB_TAG_COMMENT = "TAB_TAG_COMMENT"
+    const val TAB_TAG_DETAIL = "TAB_TAG_DETAIL"
+    const val TAB_TAG_RECOMMEND = "TAB_TAG_RECOMMEND"
+
+    /**
      * Broadcast Action
      */
 
