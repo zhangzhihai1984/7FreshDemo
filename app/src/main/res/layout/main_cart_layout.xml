@@ -28,6 +28,7 @@
                 android:src="@drawable/ic_cart" />
 
             <TextView
+                android:id="@+id/item_count_textview"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_below="@id/cart_imageview"

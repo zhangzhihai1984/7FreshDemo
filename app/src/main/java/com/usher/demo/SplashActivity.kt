@@ -23,7 +23,6 @@ class SplashActivity : BaseActivity(R.layout.activity_splash) {
                 .compose(RxUtil.getSchedulerComposer())
                 .take(COUNTDOWN_SECONDS + 1)
                 .map { COUNTDOWN_SECONDS - it }
-                .doOnNext { skip_textview.text = getString(R.string.splash_skip, it) }
 
         val adClicks = ad_imageview.clicks().take(1).doOnNext { mSplashUrl = URL }
         val skipClicks = skip_textview.clicks().take(1)
@@ -46,6 +45,8 @@ class SplashActivity : BaseActivity(R.layout.activity_splash) {
                     finish()
                 }
                 .to(RxUtil.autoDispose(this))
-                .subscribe { }
+                .subscribe {
+                    skip_textview.text = getString(R.string.splash_skip, it)
+                }
     }
 }
