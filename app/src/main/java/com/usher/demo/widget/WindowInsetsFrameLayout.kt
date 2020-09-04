@@ -1,4 +1,4 @@
-package com.usher.demo.main.widget
+package com.usher.demo.widget
 
 import android.content.Context
 import android.util.AttributeSet

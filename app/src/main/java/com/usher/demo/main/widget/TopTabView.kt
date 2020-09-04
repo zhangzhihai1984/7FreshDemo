@@ -11,6 +11,7 @@ import com.jakewharton.rxbinding4.view.clicks
 import com.usher.demo.Constants
 import com.usher.demo.R
 import com.usher.demo.util.RxUtil
+import com.usher.demo.widget.INavigator
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.top_tab_item.view.*

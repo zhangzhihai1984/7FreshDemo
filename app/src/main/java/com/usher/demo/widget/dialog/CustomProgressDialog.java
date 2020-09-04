@@ -1,4 +1,4 @@
-package com.usher.demo.widget;
+package com.usher.demo.widget.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

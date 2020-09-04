@@ -35,7 +35,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
         this[Constants.TAB_TAG_DETAIL] = MainDetailFragment.newInstance()
         this[Constants.TAB_TAG_RECOMMEND] = MainRecomendFragment.newInstance()
     }
-    private val mBackKey = PublishSubject.create<Unit>()
+    private val mBackClicks = PublishSubject.create<Unit>()
 
     private var mCartItemCount = 0
 
@@ -129,7 +129,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
     }
 
     private fun initExit() {
-        val intervals = mBackKey.timeInterval().map { it.time() }
+        val intervals = mBackClicks.timeInterval().map { it.time() }
         val exits = intervals.skip(1).filter { it < EXIT_DURATION }
 
         exits.to(RxUtil.autoDispose(this)).subscribe { finish() }
@@ -139,9 +139,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
                 .subscribe { showToast("再次点击退出程序") }
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mBackKey.onNext(Unit)
+            mBackClicks.onNext(Unit)
             return false
         }
 

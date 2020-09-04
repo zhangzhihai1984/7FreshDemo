@@ -12,8 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.usher.demo.util.PermissionUtil
 import com.usher.demo.util.SystemUtil
-import com.usher.demo.widget.CommonDialog
-import com.usher.demo.widget.CustomProgressDialog
+import com.usher.demo.widget.dialog.CommonDialog
+import com.usher.demo.widget.dialog.CustomProgressDialog
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 

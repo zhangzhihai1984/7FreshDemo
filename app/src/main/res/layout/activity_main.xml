@@ -15,7 +15,7 @@
         android:paddingStart="60dp"
         android:paddingEnd="60dp" />
 
-    <com.usher.demo.main.widget.WindowInsetsFrameLayout
+    <com.usher.demo.widget.WindowInsetsFrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/main_content_view"
