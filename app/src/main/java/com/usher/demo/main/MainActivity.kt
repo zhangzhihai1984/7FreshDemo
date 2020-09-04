@@ -5,18 +5,15 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.google.gson.Gson
 import com.jakewharton.rxbinding4.view.clicks
 import com.usher.demo.CommonWebActivity
 import com.usher.demo.Constants
 import com.usher.demo.R
-import com.usher.demo.api.ApiFactory
 import com.usher.demo.base.BaseActivity
 import com.usher.demo.main.fragment.MainCommentFragment
 import com.usher.demo.main.fragment.MainDetailFragment
 import com.usher.demo.main.fragment.MainProductFragment
 import com.usher.demo.main.fragment.MainRecomendFragment
-import com.usher.demo.util.LogUtil
 import com.usher.demo.util.RxUtil
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -51,14 +48,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
         initTabView()
         initCartLayout()
         initExit()
-
-        ApiFactory.instance.getDetail()
-                .to(RxUtil.autoDispose(this))
-                .subscribe { result ->
-                    result.data?.run {
-                        LogUtil.log("data: ${Gson().toJson(this)}")
-                    }
-                }
     }
 
     private fun initTabView() {
