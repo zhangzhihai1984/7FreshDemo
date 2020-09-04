@@ -24,11 +24,7 @@ open class BaseActivity(
     private val mContextMenuSubject = PublishSubject.create<MenuItem>()
     private val mActivityResultSubject = PublishSubject.create<ActivityResult>()
     private var mIsLocalNightMode = false
-    private val mLoadingDialog by lazy {
-        CustomProgressDialog(
-            this
-        )
-    }
+    private val mLoadingDialog by lazy { CustomProgressDialog(this) }
 
     private var lightStatusBarTheme = true
         set(isLight) {
