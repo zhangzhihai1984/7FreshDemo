@@ -46,7 +46,7 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/NoStatusBarTheme" />

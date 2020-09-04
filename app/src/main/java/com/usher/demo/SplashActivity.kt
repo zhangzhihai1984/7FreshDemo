@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.View
 import com.jakewharton.rxbinding4.view.clicks
 import com.usher.demo.base.BaseActivity
+import com.usher.demo.main.MainActivity
 import com.usher.demo.util.PermissionUtil
 import com.usher.demo.util.RxUtil
 import io.reactivex.rxjava3.core.Observable

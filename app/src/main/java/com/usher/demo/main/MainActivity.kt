@@ -1,4 +1,4 @@
-package com.usher.demo
+package com.usher.demo.main
 
 import android.content.Intent
 import android.view.KeyEvent
@@ -6,12 +6,20 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.jakewharton.rxbinding4.view.clicks
+import com.usher.demo.CommonWebActivity
+import com.usher.demo.Constants
+import com.usher.demo.R
 import com.usher.demo.api.ApiFactory
 import com.usher.demo.base.BaseActivity
+import com.usher.demo.main.fragment.MainCommentFragment
+import com.usher.demo.main.fragment.MainDetailFragment
+import com.usher.demo.main.fragment.MainProductFragment
+import com.usher.demo.main.fragment.MainRecomendFragment
 import com.usher.demo.util.LogUtil
 import com.usher.demo.util.RxUtil
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.main_cart_layout.*
 import java.util.concurrent.TimeUnit
 
@@ -20,7 +28,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
         private const val EXIT_DURATION = 1000
     }
 
-    private val mFragmentMap = hashMapOf<String, Fragment>()
+    private val mFragmentMap = hashMapOf<String, Fragment>().apply {
+        this[Constants.TAB_TAG_PRODUCT] = MainProductFragment.newInstance()
+        this[Constants.TAB_TAG_COMMENT] = MainCommentFragment.newInstance()
+        this[Constants.TAB_TAG_DETAIL] = MainDetailFragment.newInstance()
+        this[Constants.TAB_TAG_RECOMMEND] = MainRecomendFragment.newInstance()
+    }
     private val mBackKey = PublishSubject.create<Unit>()
 
     private var mCartItemCount = 0
@@ -34,9 +47,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
     }
 
     override fun initView() {
-
-        initExit()
+        initTabView()
         initCartLayout()
+        initExit()
 
 
         ApiFactory.instance.getDetail()
@@ -46,6 +59,40 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
                         LogUtil.log("data: ${Gson().toJson(this)}")
                     }
                 }
+    }
+
+    private fun initTabView() {
+        top_tab_view.navigates()
+                .startWithItem(Constants.TAB_TAG_PRODUCT)
+                .compose(RxUtil.getSchedulerComposer())
+                .to(RxUtil.autoDispose(this))
+                .subscribe { navigateTab(it) }
+    }
+
+    private fun navigateTab(tag: String) {
+        val transcation = supportFragmentManager.beginTransaction()
+
+        val hide = Observable.fromIterable(mFragmentMap.keys)
+                .filter { it != tag }
+                .filter { null != supportFragmentManager.findFragmentByTag(it) }
+                .map { mFragmentMap[it] }
+                .doOnNext { it?.run { transcation.hide(this) } }
+
+        val show = Observable.fromIterable(mFragmentMap.keys)
+                .filter { it == tag }
+                .map { mFragmentMap[it] }
+                .doOnNext {
+                    it?.run {
+                        supportFragmentManager.findFragmentByTag(tag)?.run {
+                            transcation.show(it)
+                        } ?: transcation.add(R.id.main_content_view, this, tag)
+                    }
+                }
+
+        Observable.concat(hide, show)
+                .doOnComplete { transcation.commitAllowingStateLoss() }
+                .to(RxUtil.autoDispose(this))
+                .subscribe()
     }
 
     private fun initCartLayout() {

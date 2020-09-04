@@ -6,7 +6,8 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <com.usher.demo.widget.TopTabView
+    <com.usher.demo.main.widget.TopTabView
+        android:id="@+id/top_tab_view"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@color/page_background"
@@ -14,12 +15,11 @@
         android:paddingStart="60dp"
         android:paddingEnd="60dp" />
 
-    <View
+    <com.usher.demo.main.widget.WindowInsetsFrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/colorPrimary"
-        android:visibility="invisible" />
+        android:id="@+id/main_content_view"
+        android:layout_weight="1" />
 
     <include layout="@layout/main_cart_layout" />
 

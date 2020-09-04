@@ -1,4 +1,4 @@
-package com.usher.demo.widget
+package com.usher.demo.main.widget
 
 import io.reactivex.rxjava3.core.Observable
 
