@@ -6,4 +6,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/indicator_textview"
+        android:layout_width="36dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/banner_indicator_background"
+        android:gravity="center"
+        android:text="@string/banner_indicator"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
 </merge>
