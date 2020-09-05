@@ -7,6 +7,7 @@ import com.usher.demo.base.BaseNavigationFragment
 import com.usher.demo.util.LogUtil
 import com.usher.demo.util.RxUtil
 import kotlinx.android.synthetic.main.fragment_main_product.*
+import kotlinx.android.synthetic.main.main_description_layout.*
 
 class MainProductFragment : BaseNavigationFragment(R.layout.fragment_main_product) {
     companion object {
@@ -21,6 +22,11 @@ class MainProductFragment : BaseNavigationFragment(R.layout.fragment_main_produc
                     result.data?.run {
                         LogUtil.log("data: ${Gson().toJson(this)}")
                         banner_view.data = imageUrls
+
+                        name_textview.text = skuName
+                        description_textview.text = adText
+                        price_textview.text = getString(R.string.main_price, jdPrice)
+                        unit_textview.text = buyUnit
                     }
                 }
     }

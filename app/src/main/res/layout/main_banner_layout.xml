@@ -16,7 +16,6 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/banner_indicator_background"
         android:gravity="center"
-        android:text="@string/banner_indicator"
         android:textColor="@android:color/white"
         android:textSize="12sp" />
 

@@ -42,7 +42,7 @@ class BannerView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 .filter { data.isNotEmpty() }
                 .to(RxUtil.autoDispose(context as LifecycleOwner))
                 .subscribe { position ->
-                    indicator_textview.text = context.getString(R.string.banner_indicator, position + 1, data.size)
+                    indicator_textview.text = context.getString(R.string.main_banner_indicator, position + 1, data.size)
                 }
     }
 
