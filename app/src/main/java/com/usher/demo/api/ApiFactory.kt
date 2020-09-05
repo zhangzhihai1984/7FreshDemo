@@ -1,18 +1,14 @@
 package com.usher.demo.api
 
 import android.annotation.SuppressLint
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.usher.demo.api.entities.BaseResultEntity
 import com.usher.demo.api.entities.DetailEntity
-import com.usher.demo.api.entities.ErrorEntity
 import com.usher.demo.api.entities.ResultEntity
 import com.usher.demo.util.RxUtil
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableTransformer
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
-import okhttp3.ResponseBody
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -60,40 +56,19 @@ class ApiFactory private constructor() {
                 override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
                 }
 
-                override fun getAcceptedIssuers(): Array<X509Certificate> {
-                    return arrayOf()
-                }
+                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
             })
 
     private fun getHostnameVerifier(): HostnameVerifier = HostnameVerifier { _, _ -> true }
 
     private fun <T> getResultComposer(): ObservableTransformer<T, ResultEntity<T>> =
             ObservableTransformer { upstream ->
-                upstream.map { resp -> ResultEntity(resp, null) }
+                upstream.map { resp -> ResultEntity(resp) }
                         .onErrorReturn { err ->
-                            var result = ResultEntity<T>(null, ErrorEntity(-1, "网络异常,请检查网络连接!"))
+                            var result = ResultEntity<T>(null)
                             if (err is HttpException) {
                                 err.response()?.errorBody()?.run {
-                                    result = ResultEntity(
-                                            null,
-                                            Gson().fromJson(string(), ErrorEntity::class.java)
-                                    )
-                                }
-                            }
-
-                            result
-                        }
-            }
-
-    private fun getBaseResultComposer(): ObservableTransformer<ResponseBody, BaseResultEntity> =
-            ObservableTransformer { upstream ->
-                upstream.map { BaseResultEntity(null) }
-                        .onErrorReturn { err ->
-                            var result = BaseResultEntity(ErrorEntity(-1, "网络异常,请检查网络连接!"))
-                            if (err is HttpException) {
-                                err.response()?.errorBody()?.run {
-                                    result =
-                                            BaseResultEntity(Gson().fromJson(string(), ErrorEntity::class.java))
+                                    result = ResultEntity(null)
                                 }
                             }
 
