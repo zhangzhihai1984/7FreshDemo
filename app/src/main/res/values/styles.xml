@@ -11,7 +11,7 @@
     </style>
 
     <style name="SplashTheme" parent="FullScreenTheme">
-        <item name="android:windowBackground">@drawable/splash_girl_with_mandolin</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
     <style name="NoStatusBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
