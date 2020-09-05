@@ -30,10 +30,15 @@ class SplashActivity : BaseActivity(R.layout.activity_splash) {
 
         PermissionUtil.requestPermissions(this, Constants.PERMISSION_INIT_APP)
                 .take(1)
-                .switchMap {
-                    ad_imageview.visibility = View.VISIBLE
-                    skip_textview.visibility = View.VISIBLE
-                    countdowns
+                .switchMap { granted ->
+                    if (granted) {
+                        ad_imageview.visibility = View.VISIBLE
+                        skip_textview.visibility = View.VISIBLE
+                        countdowns
+                    } else {
+                        finish()
+                        Observable.error(Exception(""))
+                    }
                 }
                 .takeUntil { it <= 0 }
                 .takeUntil(adClicks)
@@ -45,6 +50,7 @@ class SplashActivity : BaseActivity(R.layout.activity_splash) {
 
                     finish()
                 }
+                .doOnError { }
                 .to(RxUtil.autoDispose(this))
                 .subscribe {
                     skip_textview.text = getString(R.string.splash_skip, it)
