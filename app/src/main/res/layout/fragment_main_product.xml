@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/page_background"
     android:layout_height="match_parent">
 
     <ScrollView
@@ -9,10 +10,19 @@
         android:fillViewport="true"
         android:overScrollMode="never">
 
-        <com.usher.demo.main.widget.BannerView
-            android:id="@+id/banner_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.usher.demo.main.widget.BannerView
+                android:id="@+id/banner_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include layout="@layout/main_description_layout" />
+
+        </LinearLayout>
 
     </ScrollView>
 
