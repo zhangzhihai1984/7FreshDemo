@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">7FreshDemo</string>
-    
+
     <string name="top_tab_product">商品</string>
     <string name="top_tab_comment">评价</string>
     <string name="top_tab_detail">详情</string>
@@ -22,5 +22,8 @@
 
     <string name="main_banner_indicator">%1$d/%2$d</string>
     <string name="main_price">¥%1$s</string>
+    <string name="main_icon">七鲜</string>
+    <string name="main_full_address">7FRESH%1$s</string>
+    <string name="main_delivery">送至</string>
 
 </resources>
