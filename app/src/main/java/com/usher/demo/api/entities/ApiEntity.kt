@@ -32,9 +32,9 @@ data class CartItemEntity(
         val unitPrice: Float,       //9.9
         val totalPrice: String,
         val status: Int,
-        val weightSku: Boolean,     //0.350
-        val weight: String,         //kg
-        val weightUnit: String,
+        val weightSku: Boolean,
+        val weight: String,         //0.350
+        val weightUnit: String,     //kg
         val imageUrl: String,
         val buyUnit: String,        //盒
         val buyNum: Int
