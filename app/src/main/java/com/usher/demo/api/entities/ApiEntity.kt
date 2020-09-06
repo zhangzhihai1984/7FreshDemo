@@ -21,14 +21,21 @@ data class CartEntity(
         val cartItems: List<CartItemEntity>
 )
 
+/**
+ * 规格 0.350kg
+ * ¥9.9/盒
+ */
 data class CartItemEntity(
         val inCartId: Int,
         val orderLineId: String,
-        val unitPrice: Float,
+        val skuName: String,
+        val unitPrice: Float,       //9.9
         val totalPrice: String,
         val status: Int,
-        val weightSku: Boolean,
-        val weight: String,
+        val weightSku: Boolean,     //0.350
+        val weight: String,         //kg
         val weightUnit: String,
-        val imageUrl: String
+        val imageUrl: String,
+        val buyUnit: String,        //盒
+        val buyNum: Int
 )
