@@ -2,6 +2,7 @@ package com.usher.demo.api
 
 import android.annotation.SuppressLint
 import com.google.gson.GsonBuilder
+import com.usher.demo.api.entities.CartEntity
 import com.usher.demo.api.entities.DetailEntity
 import com.usher.demo.api.entities.ResultEntity
 import com.usher.demo.util.RxUtil
@@ -78,6 +79,11 @@ class ApiFactory private constructor() {
 
     fun getDetail(): Observable<ResultEntity<DetailEntity>> =
             mApiService.getDetail()
+                    .compose(RxUtil.getSchedulerComposer())
+                    .compose(getResultComposer())
+
+    fun getCart(): Observable<ResultEntity<CartEntity>> =
+            mApiService.getCart()
                     .compose(RxUtil.getSchedulerComposer())
                     .compose(getResultComposer())
 }
