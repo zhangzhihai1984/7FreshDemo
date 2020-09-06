@@ -10,6 +10,7 @@ import com.usher.demo.CommonWebActivity
 import com.usher.demo.Constants
 import com.usher.demo.R
 import com.usher.demo.base.BaseActivity
+import com.usher.demo.cart.CartActivity
 import com.usher.demo.main.fragment.MainCommentFragment
 import com.usher.demo.main.fragment.MainDetailFragment
 import com.usher.demo.main.fragment.MainProductFragment
@@ -110,11 +111,10 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
                     showToast("添加成功")
                 }
 
-        //TODO: New Page
-        cart_imageview.clicks()
+        detail_layout.clicks()
                 .compose(RxUtil.singleClick())
                 .to(RxUtil.autoDispose(this))
-                .subscribe { }
+                .subscribe { startActivity(Intent(this, CartActivity::class.java)) }
     }
 
     private fun initExit() {

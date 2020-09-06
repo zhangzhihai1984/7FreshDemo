@@ -26,7 +26,7 @@ class MainProductFragment : BaseNavigationFragment(R.layout.fragment_main_produc
         scrollview.scrollChangeEvents()
                 .map { it.scrollY }
                 .to(RxUtil.autoDispose(this))
-                .subscribe {  }
+                .subscribe { }
 
         top_textview.clicks()
                 .compose(RxUtil.singleClick())

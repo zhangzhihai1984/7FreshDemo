@@ -10,7 +10,7 @@ import com.usher.demo.util.RxUtil
 import kotlinx.android.synthetic.main.activity_common_web.*
 import kotlinx.android.synthetic.main.title_layout.*
 
-class CommonWebActivity : BaseActivity(R.layout.activity_common_web) {
+class CommonWebActivity : BaseActivity(R.layout.activity_common_web, Theme.LIGHT_AUTO) {
     private val mUrl by lazy { intent.getStringExtra(Constants.TAG_URL) }
     private var mReloadUrl: String = ""
 
@@ -63,8 +63,6 @@ class CommonWebActivity : BaseActivity(R.layout.activity_common_web) {
                             finish()
                     }
                 }
-
-        statusbar_view.updateLayoutParams { height = statusBarHeight }
     }
 
     private val mWebViewClient = object : WebViewClient() {
