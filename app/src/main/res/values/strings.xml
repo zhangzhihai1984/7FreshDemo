@@ -19,6 +19,7 @@
 
     <!-- Main -->
     <string name="main_add">加入购物车</string>
+    <string name="main_top">返回\n顶部</string>
 
     <string name="main_banner_indicator">%1$d/%2$d</string>
     <string name="main_price">¥%1$s</string>
