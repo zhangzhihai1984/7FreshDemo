@@ -5,4 +5,13 @@
     android:background="@color/page_background"
     android:orientation="vertical">
 
+    <include layout="@layout/title_layout" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <include layout="@layout/cart_pay_layout" />
+
 </LinearLayout>

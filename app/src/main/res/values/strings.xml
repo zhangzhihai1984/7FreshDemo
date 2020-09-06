@@ -27,4 +27,8 @@
     <string name="main_full_address">7FRESH%1$s</string>
     <string name="main_delivery">送至</string>
 
+    <!-- Cart -->
+    <string name="cart_title">购物车</string>
+    <string name="cart_pay">去结算(%1$d)</string>
+
 </resources>
