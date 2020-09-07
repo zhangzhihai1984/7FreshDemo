@@ -59,8 +59,8 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
+            android:textColor="@color/text_33"
+            android:textSize="14sp"
             android:visibility="gone"
             tools:text="保存"
             tools:visibility="visible" />

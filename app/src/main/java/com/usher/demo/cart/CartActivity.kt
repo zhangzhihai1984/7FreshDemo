@@ -81,7 +81,12 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     .confirms()
                     .doOnNext {
                         mCartItems.removeAt(position)
+                        mAdapter.notifyDataSetChanged()
+
                         showEmptyLayoutIfNeeded()
+
+                        updateBatchLayout()
+                        updatePayLayout()
                     }
                     .map { Unit }
         }
@@ -92,9 +97,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .map { it.position }
                 .switchMap { position -> deleteWarns(position) }
                 .to(RxUtil.autoDispose(this))
-                .subscribe {
-                    mAdapter.notifyDataSetChanged()
-                }
+                .subscribe {}
 
         //Add Item buyNum
         mAdapter.itemChildClicks()
@@ -104,7 +107,10 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .to(RxUtil.autoDispose(this))
                 .subscribe { position ->
                     mCartItems[position].buyNum = mCartItems[position].buyNum.inc()
+                    mCartItems[position].status = 1
                     mAdapter.notifyDataSetChanged()
+                    updateBatchLayout()
+                    updatePayLayout()
                 }
 
         //Minus Item buyNum
@@ -118,14 +124,15 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                         deleteWarns(position)
                     } else {
                         mCartItems[position].buyNum = num
+                        mCartItems[position].status = 1
                         mAdapter.notifyDataSetChanged()
+                        updateBatchLayout()
+                        updatePayLayout()
                         Observable.empty()
                     }
                 }
                 .to(RxUtil.autoDispose(this))
-                .subscribe {
-                    mAdapter.notifyDataSetChanged()
-                }
+                .subscribe {}
 
         ApiFactory.instance.getCart()
                 .to(RxUtil.autoDispose(this))
@@ -133,8 +140,9 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     result.data?.let { cartEntity ->
                         LogUtil.log("data: ${Gson().toJson(cartEntity)}")
 
-                        mCartItems.clear()
+//                        mCartItems.clear()
                         mCartItems.addAll(cartEntity.cartItems)
+
                         mAdapter.notifyDataSetChanged()
 
                         showEmptyLayoutIfNeeded()
@@ -153,6 +161,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .subscribe { finish() }
 
         center_textview.text = getString(R.string.cart_title)
+        end_textview.text = getString(R.string.cart_delete)
     }
 
     private fun showEmptyLayoutIfNeeded() {
@@ -160,15 +169,18 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
         cart_empty_layout.visibility = if (mCartItems.isEmpty()) View.VISIBLE else View.GONE
     }
 
+    /**
+     *
+     */
     private fun updateBatchLayout() {
-        if (mCartItems.isNotEmpty()) {
-            all_checkbox.isChecked = mCartItems.find { it.status <= 0 }?.run { false } ?: true
-        }
+        end_textview.visibility = mCartItems.find { it.status > 0 }?.run { View.VISIBLE }
+                ?: View.GONE
+        all_checkbox.isChecked = mCartItems.find { it.status <= 0 }?.run { false } ?: true
     }
 
     private fun updatePayLayout() {
         val checkedItems = mCartItems.filter { it.status > 0 }
-        val totalPrice = checkedItems.map { it.unitPrice * it.buyNum }.reduceOrNull { acc, price -> acc + price }?.toString()
+        val totalPrice = checkedItems.map { it.unitPrice * it.buyNum }.reduceOrNull { acc, price -> acc + price }?.run { String.format("%.2f", this) }
                 ?: "0.00"
 
         total_price_textview.text = getString(R.string.cart_price, totalPrice)
