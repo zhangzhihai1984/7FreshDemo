@@ -77,7 +77,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
          */
         val deleteWarns: (position: Int) -> Observable<Unit> = { position ->
             CommonDialog(this)
-                    .withContent(R.string.cart_delete_warn)
+                    .withContent(R.string.cart_delete_single_warn)
                     .withDialogType(CommonDialog.ButtonType.DOUBLE_WARN)
                     .confirms()
                     .doOnNext {
@@ -168,6 +168,27 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
 
         center_textview.text = getString(R.string.cart_title)
         end_textview.text = getString(R.string.cart_delete)
+        end_textview.clicks()
+                .compose(RxUtil.singleClick())
+                .switchMap {
+                    val checkedItems = mCartItems.filter { it.status > 0 }
+
+                    CommonDialog(this)
+                            .withContent(getString(R.string.cart_delete_batch_warn, checkedItems.size))
+                            .withDialogType(CommonDialog.ButtonType.DOUBLE_WARN)
+                            .confirms()
+                            .doOnNext {
+                                mCartItems.removeAll(checkedItems)
+                                mAdapter.notifyDataSetChanged()
+
+                                showEmptyLayoutIfNeeded()
+
+                                updateBatchLayout()
+                                updatePayLayout()
+                            }
+                }
+                .to(RxUtil.autoDispose(this))
+                .subscribe {}
     }
 
     private fun showEmptyLayoutIfNeeded() {
