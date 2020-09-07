@@ -54,15 +54,9 @@ class CommonDialog(context: Context) : Dialog(context, R.style.FramelessDialog) 
 
     fun withDialogType(type: ButtonType): CommonDialog = this.apply {
         when (type) {
-            ButtonType.DOUBLE_PRIMARY -> {
+            ButtonType.DOUBLE_PRIMARY, ButtonType.DOUBLE_WARN -> {
                 double_layout.visibility = View.VISIBLE
                 single_layout.visibility = View.GONE
-                confirm_textview.setBackgroundResource(R.drawable.dialog_button_primary_background)
-            }
-            ButtonType.DOUBLE_WARN -> {
-                double_layout.visibility = View.VISIBLE
-                single_layout.visibility = View.GONE
-                confirm_textview.setBackgroundResource(R.drawable.dialog_button_warn_background)
             }
             ButtonType.SINGLE -> {
                 double_layout.visibility = View.GONE
@@ -72,16 +66,6 @@ class CommonDialog(context: Context) : Dialog(context, R.style.FramelessDialog) 
     }
 
     fun withCancelable(cancelable: Boolean): CommonDialog = this.apply { setCancelable(cancelable) }
-
-    fun withTitle(titleRes: Int): CommonDialog = this.apply {
-        title_textview.text = context.getString(titleRes)
-        title_textview.visibility = View.VISIBLE
-    }
-
-    fun withTitle(content: String): CommonDialog = this.apply {
-        title_textview.text = content
-        title_textview.visibility = View.VISIBLE
-    }
 
     fun withContent(contentRes: Int): CommonDialog = this.apply { content_textview.text = context.getString(contentRes) }
 
