@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_cart.*
 import kotlinx.android.synthetic.main.cart_pay_layout.*
 import kotlinx.android.synthetic.main.item_cart.view.*
 import kotlinx.android.synthetic.main.title_layout.*
+import java.util.concurrent.TimeUnit
 
 class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
     private val mCartItems = ArrayList<CartItemEntity>()
@@ -134,7 +135,12 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .to(RxUtil.autoDispose(this))
                 .subscribe {}
 
-        ApiFactory.instance.getCart()
+        /**
+         * 由于提供的数据只有一个item, 不利于删除和全选等功能的展现, 因此这里通过重发请求增加若干item
+         */
+        Observable.interval(0, 100, TimeUnit.MILLISECONDS)
+                .take(3)
+                .flatMap { ApiFactory.instance.getCart() }
                 .to(RxUtil.autoDispose(this))
                 .subscribe { result ->
                     result.data?.let { cartEntity ->
@@ -170,7 +176,8 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
     }
 
     /**
-     *
+     * 1. 顶部"删除"显示与否
+     * 2. 底部"全选"选中状态
      */
     private fun updateBatchLayout() {
         end_textview.visibility = mCartItems.find { it.status > 0 }?.run { View.VISIBLE }
@@ -178,6 +185,10 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
         all_checkbox.isChecked = mCartItems.find { it.status <= 0 }?.run { false } ?: true
     }
 
+    /**
+     * 1. 合计价钱(保留2位小数)
+     * 2. 去结算(X)数量(如果为0不可点击)
+     */
     private fun updatePayLayout() {
         val checkedItems = mCartItems.filter { it.status > 0 }
         val totalPrice = checkedItems.map { it.unitPrice * it.buyNum }.reduceOrNull { acc, price -> acc + price }?.run { String.format("%.2f", this) }
