@@ -38,11 +38,11 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
          * minus item buyNum
          *
          * check all
-         * delete all (status == 1)
+         * delete all (status > 0)
          *
          * notifyDataSetChanged
          * updateBatchLayout (TBD)
-         * calculate total price
+         * updatePayLayout (total price & pay count)
          */
 
         //Check All
@@ -53,6 +53,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     mCartItems.forEach { it.status = if (all_checkbox.isChecked) 0 else 1 }
                     mAdapter.notifyDataSetChanged()
                     updateBatchLayout()
+                    updatePayLayout()
                 }
 
         //Check Item
@@ -65,6 +66,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     mCartItems[position].status = if (mCartItems[position].status <= 0) 1 else 0
                     mAdapter.notifyDataSetChanged()
                     updateBatchLayout()
+                    updatePayLayout()
                 }
 
         //Delete Item
@@ -134,26 +136,14 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                         mCartItems.clear()
                         mCartItems.addAll(cartEntity.cartItems)
                         mAdapter.notifyDataSetChanged()
-                        updateBatchLayout()
-                        showEmptyLayoutIfNeeded()
 
-                        //TODO:
-                        total_price_textview.text = getString(R.string.cart_price, "0.00")
+                        showEmptyLayoutIfNeeded()
+                        updateBatchLayout()
+                        updatePayLayout()
                     } ?: run {
                         finish()
                     }
                 }
-    }
-
-    private fun showEmptyLayoutIfNeeded() {
-        cart_content_layout.visibility = if (mCartItems.isEmpty()) View.GONE else View.VISIBLE
-        cart_empty_layout.visibility = if (mCartItems.isEmpty()) View.VISIBLE else View.GONE
-    }
-
-    private fun updateBatchLayout() {
-        if (mCartItems.isNotEmpty()) {
-            all_checkbox.isChecked = mCartItems.find { it.status == 0 }?.run { false } ?: true
-        }
     }
 
     private fun initTitleView() {
@@ -165,6 +155,28 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
         center_textview.text = getString(R.string.cart_title)
     }
 
+    private fun showEmptyLayoutIfNeeded() {
+        cart_content_layout.visibility = if (mCartItems.isEmpty()) View.GONE else View.VISIBLE
+        cart_empty_layout.visibility = if (mCartItems.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun updateBatchLayout() {
+        if (mCartItems.isNotEmpty()) {
+            all_checkbox.isChecked = mCartItems.find { it.status <= 0 }?.run { false } ?: true
+        }
+    }
+
+    private fun updatePayLayout() {
+        val checkedItems = mCartItems.filter { it.status > 0 }
+        val totalPrice = checkedItems.map { it.unitPrice * it.buyNum }.reduceOrNull { acc, price -> acc + price }?.toString()
+                ?: "0.00"
+
+        total_price_textview.text = getString(R.string.cart_price, totalPrice)
+
+        pay_textview.text = getString(R.string.cart_pay, checkedItems.size)
+        pay_textview.isEnabled = checkedItems.isNotEmpty()
+    }
+
     private class CartAdapter(data: List<CartItemEntity>) : RxBaseQuickAdapter<CartItemEntity, BaseViewHolder>(R.layout.item_cart, data) {
         override fun convert(holder: BaseViewHolder, cartItem: CartItemEntity) {
             holder.addOnClickListener(R.id.confirm_layout)
@@ -173,7 +185,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
             holder.addOnClickListener(R.id.minus_imageview)
 
             holder.itemView.run {
-                confirm_checkbox.isChecked = cartItem.status == 1
+                confirm_checkbox.isChecked = cartItem.status > 0
                 Picasso.get().load(cartItem.imageUrl).into(product_imageview)
                 name_textview.text = cartItem.skuName
                 spec_textview.text = mContext.getString(R.string.cart_spec, "${cartItem.weight}${cartItem.weightUnit}")
