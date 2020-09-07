@@ -30,6 +30,30 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
         cart_recyclerview.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         cart_recyclerview.adapter = mAdapter
 
+        /**
+         * check item
+         * delete item
+         * add item buyNum
+         * minus item buyNum
+         *
+         * check all
+         * delete all (status == 1)
+         *
+         * notifyDataSetChanged
+         * updateBatchLayout (TBD)
+         * calculate total price
+         */
+
+        //Check All
+        all_layout.clicks()
+                .compose(RxUtil.singleClick())
+                .to(RxUtil.autoDispose(this))
+                .subscribe {
+                    mCartItems.forEach { it.status = if (all_checkbox.isChecked) 0 else 1 }
+                    mAdapter.notifyDataSetChanged()
+                    updateBatchLayout()
+                }
+
         //Check Item
         mAdapter.itemChildClicks()
                 .compose(RxUtil.getSchedulerComposer())
@@ -37,8 +61,9 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .map { it.position }
                 .to(RxUtil.autoDispose(this))
                 .subscribe { position ->
-                    mCartItems[position].status = mCartItems[position].status.inv()
+                    mCartItems[position].status = if (mCartItems[position].status <= 0) 1 else 0
                     mAdapter.notifyDataSetChanged()
+                    updateBatchLayout()
                 }
 
         //Delete Item
@@ -61,7 +86,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     mAdapter.notifyDataSetChanged()
                 }
 
-        //Add Item
+        //Add Item buyNum
         mAdapter.itemChildClicks()
                 .compose(RxUtil.getSchedulerComposer())
                 .filter { clickItem -> clickItem.view.id == R.id.add_imageview }
@@ -72,7 +97,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     mAdapter.notifyDataSetChanged()
                 }
 
-        //Minus Item
+        //Minus Item buyNum
         mAdapter.itemChildClicks()
                 .compose(RxUtil.getSchedulerComposer())
                 .filter { clickItem -> clickItem.view.id == R.id.minus_imageview }
@@ -100,6 +125,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                         mCartItems.clear()
                         mCartItems.addAll(cartEntity.cartItems)
                         mAdapter.notifyDataSetChanged()
+                        updateBatchLayout()
 
                         //TODO:
                         total_price_textview.text = getString(R.string.cart_price, "0.00")
@@ -107,6 +133,12 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                         finish()
                     }
                 }
+    }
+
+    private fun updateBatchLayout() {
+        if (mCartItems.isNotEmpty()) {
+            all_checkbox.isChecked = mCartItems.find { it.status == 0 }?.run { false } ?: true
+        }
     }
 
     private fun initTitleView() {
