@@ -26,6 +26,23 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
     private val mCartItems = ArrayList<CartItemEntity>()
     private val mAdapter by lazy { CartAdapter(mCartItems) }
 
+    /**
+     * 删除item对话框:
+     * 1. 如果确认删除, 移除当前item
+     * 2. 如果确认删除, 如果购物车为空则显示empty_layout
+     */
+    private val itemDeleteWarns: (position: Int) -> Observable<Unit> = { position ->
+        CommonDialog(this)
+                .withContent(R.string.cart_delete_single_warn)
+                .withDialogType(CommonDialog.ButtonType.DOUBLE_WARN)
+                .confirms()
+                .doOnNext {
+                    mCartItems.removeAt(position)
+                    showEmptyLayoutIfNeeded()
+                }
+                .map { Unit }
+    }
+
     override fun initView() {
         initTitleView()
 
@@ -46,94 +63,85 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
          * updatePayLayout (total price & pay count)
          */
 
-        //Check All
-        all_layout.clicks()
-                .compose(RxUtil.singleClick())
-                .to(RxUtil.autoDispose(this))
-                .subscribe {
-                    mCartItems.forEach { it.status = if (all_checkbox.isChecked) 0 else 1 }
-                    mAdapter.notifyDataSetChanged()
-                    updateBatchLayout()
-                    updatePayLayout()
-                }
 
-        //Check Item
-        mAdapter.itemChildClicks()
-                .compose(RxUtil.getSchedulerComposer())
-                .filter { clickItem -> clickItem.view.id == R.id.confirm_layout }
-                .map { it.position }
-                .to(RxUtil.autoDispose(this))
-                .subscribe { position ->
-                    mCartItems[position].status = if (mCartItems[position].status <= 0) 1 else 0
-                    mAdapter.notifyDataSetChanged()
-                    updateBatchLayout()
-                    updatePayLayout()
-                }
-
-        //Delete Item
         /**
-         * delete item
-         * show empty layout if needed
+         * 点击item的checkbox:
+         * 1. 更新item的status
          */
-        val deleteWarns: (position: Int) -> Observable<Unit> = { position ->
-            CommonDialog(this)
-                    .withContent(R.string.cart_delete_single_warn)
-                    .withDialogType(CommonDialog.ButtonType.DOUBLE_WARN)
-                    .confirms()
-                    .doOnNext {
-                        mCartItems.removeAt(position)
-                        mAdapter.notifyDataSetChanged()
-
-                        showEmptyLayoutIfNeeded()
-
-                        updateBatchLayout()
-                        updatePayLayout()
-                    }
-                    .map { Unit }
-        }
-
-        mAdapter.itemChildClicks()
+        val itemChecks = mAdapter.itemChildClicks()
+                .filter { clickItem -> clickItem.view.id == R.id.confirm_layout }
+                .compose(RxUtil.singleClick())
                 .compose(RxUtil.getSchedulerComposer())
-                .filter { clickItem -> clickItem.view.id == R.id.delete_textview }
                 .map { it.position }
-                .switchMap { position -> deleteWarns(position) }
-                .to(RxUtil.autoDispose(this))
-                .subscribe {}
+                .doOnNext { position -> mCartItems[position].status = if (mCartItems[position].status <= 0) 1 else 0 }
+                .map { Unit }
 
-        //Add Item buyNum
-        mAdapter.itemChildClicks()
+
+        /**
+         * 点击item的"+"
+         * 1. item的购买数量+1
+         * 2. 更新item的status为选中
+         */
+        val itemAdds = mAdapter.itemChildClicks()
+                .filter { clickItem -> clickItem.view.id == R.id.add_layout }
+                .compose(RxUtil.singleClick())
                 .compose(RxUtil.getSchedulerComposer())
-                .filter { clickItem -> clickItem.view.id == R.id.add_imageview }
                 .map { it.position }
-                .to(RxUtil.autoDispose(this))
-                .subscribe { position ->
+                .doOnNext { position ->
                     mCartItems[position].buyNum = mCartItems[position].buyNum.inc()
                     mCartItems[position].status = 1
-                    mAdapter.notifyDataSetChanged()
-                    updateBatchLayout()
-                    updatePayLayout()
                 }
+                .map { Unit }
 
-        //Minus Item buyNum
-        mAdapter.itemChildClicks()
+        /**
+         * 点击item的"-"
+         * 1. 如果item购买数量>1, item的购买数量-1, 更新item的status为选中
+         * 2. 如果item购买数量=1, 弹出删除确认对话框
+         */
+        val itemLess = mAdapter.itemChildClicks()
+                .filter { clickItem -> clickItem.view.id == R.id.minus_layout }
+                .compose(RxUtil.singleClick())
                 .compose(RxUtil.getSchedulerComposer())
-                .filter { clickItem -> clickItem.view.id == R.id.minus_imageview }
                 .map { it.position }
                 .switchMap { position ->
                     val num = mCartItems[position].buyNum.dec()
                     if (num <= 0) {
-                        deleteWarns(position)
+                        itemDeleteWarns(position)
                     } else {
                         mCartItems[position].buyNum = num
                         mCartItems[position].status = 1
-                        mAdapter.notifyDataSetChanged()
-                        updateBatchLayout()
-                        updatePayLayout()
-                        Observable.empty()
+                        Observable.just(Unit)
                     }
                 }
+
+        /**
+         * 点击item的"删除"
+         * 1. 弹出删除确认对话框
+         */
+        val itemDeletes = mAdapter.itemChildClicks()
+                .filter { clickItem -> clickItem.view.id == R.id.delete_textview }
+                .compose(RxUtil.singleClick())
+                .compose(RxUtil.getSchedulerComposer())
+                .map { it.position }
+                .switchMap { position -> itemDeleteWarns(position) }
+                .map { Unit }
+
+        /**
+         * 点击"全选":
+         * 1. 更新所有item的status
+         */
+        val allChecks = all_layout.clicks()
+                .compose(RxUtil.singleClick())
+                .doOnNext { mCartItems.forEach { it.status = if (all_checkbox.isChecked) 0 else 1 } }
+
+        Observable.mergeArray(itemChecks, allChecks, itemAdds, itemLess, itemDeletes)
                 .to(RxUtil.autoDispose(this))
-                .subscribe {}
+                .subscribe {
+                    mAdapter.notifyDataSetChanged()
+                    updateBatchLayout()
+                    updatePayLayout()
+                }
+
 
         /**
          * 由于提供的数据只有一个item, 不利于删除和全选等功能的展现, 因此这里通过重发请求增加若干item
@@ -225,8 +233,8 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
         override fun convert(holder: BaseViewHolder, cartItem: CartItemEntity) {
             holder.addOnClickListener(R.id.confirm_layout)
             holder.addOnClickListener(R.id.delete_textview)
-            holder.addOnClickListener(R.id.add_imageview)
-            holder.addOnClickListener(R.id.minus_imageview)
+            holder.addOnClickListener(R.id.add_layout)
+            holder.addOnClickListener(R.id.minus_layout)
 
             holder.itemView.run {
                 confirm_checkbox.isChecked = cartItem.status > 0
