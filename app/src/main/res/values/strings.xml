@@ -39,4 +39,7 @@
 
     <string name="cart_delete_warn">确定删除商品吗?</string>
 
+    <string name="cart_empty">购物车是空的，快去挑选商品吧</string>
+    <string name="cart_shopping">去首页逛逛</string>
+
 </resources>

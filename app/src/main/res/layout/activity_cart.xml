@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/page_background"
-    android:orientation="vertical">
+    android:background="@color/page_background">
 
-    <include layout="@layout/title_layout" />
+    <include
+        android:id="@+id/title_layout"
+        layout="@layout/title_layout" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cart_recyclerview"
+    <LinearLayout
+        android:id="@+id/cart_content_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:overScrollMode="never" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_layout"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
 
-    <include layout="@layout/cart_pay_layout" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cart_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:overScrollMode="never" />
 
-</LinearLayout>
+        <include layout="@layout/cart_pay_layout" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/cart_empty_layout"
+        layout="@layout/cart_empty_layout" />
+
+</RelativeLayout>

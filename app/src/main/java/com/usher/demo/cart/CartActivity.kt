@@ -1,5 +1,6 @@
 package com.usher.demo.cart
 
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseViewHolder
@@ -67,12 +68,19 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 }
 
         //Delete Item
+        /**
+         * delete item
+         * show empty layout if needed
+         */
         val deleteWarns: (position: Int) -> Observable<Unit> = { position ->
             CommonDialog(this)
                     .withContent(R.string.cart_delete_warn)
                     .withDialogType(CommonDialog.ButtonType.DOUBLE_WARN)
                     .confirms()
-                    .doOnNext { mCartItems.removeAt(position) }
+                    .doOnNext {
+                        mCartItems.removeAt(position)
+                        showEmptyLayoutIfNeeded()
+                    }
                     .map { Unit }
         }
 
@@ -122,10 +130,12 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .subscribe { result ->
                     result.data?.let { cartEntity ->
                         LogUtil.log("data: ${Gson().toJson(cartEntity)}")
+
                         mCartItems.clear()
                         mCartItems.addAll(cartEntity.cartItems)
                         mAdapter.notifyDataSetChanged()
                         updateBatchLayout()
+                        showEmptyLayoutIfNeeded()
 
                         //TODO:
                         total_price_textview.text = getString(R.string.cart_price, "0.00")
@@ -133,6 +143,11 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                         finish()
                     }
                 }
+    }
+
+    private fun showEmptyLayoutIfNeeded() {
+        cart_content_layout.visibility = if (mCartItems.isEmpty()) View.GONE else View.VISIBLE
+        cart_empty_layout.visibility = if (mCartItems.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun updateBatchLayout() {
