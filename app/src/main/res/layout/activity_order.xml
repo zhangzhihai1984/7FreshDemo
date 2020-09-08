@@ -9,4 +9,12 @@
         android:id="@+id/title_layout"
         layout="@layout/title_layout" />
 
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/order_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <include layout="@layout/order_pay_layout" />
+
 </LinearLayout>

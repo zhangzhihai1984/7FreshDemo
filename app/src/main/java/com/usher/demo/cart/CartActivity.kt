@@ -198,7 +198,6 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     startActivity(Intent(this, OrderActivity::class.java).apply {
                         putExtra(Constants.TAG_DATA, Gson().toJson(mCartItems))
                     })
-                    finish()
                 }
     }
 
