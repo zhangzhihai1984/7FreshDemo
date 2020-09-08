@@ -27,7 +27,8 @@ object Constants {
     /**
      * Permission
      */
-    val PERMISSION_INIT_APP = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    val PERMISSION_INIT_APP = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    const val PERMISSION_USE_CAMERA = Manifest.permission.CAMERA
 
     private val APP_FILE_PATH = Environment.getExternalStorageDirectory().toString() + File.separator + "7fresh" + File.separator
     val APP_LOG_PATH = APP_FILE_PATH + "logs" + File.separator

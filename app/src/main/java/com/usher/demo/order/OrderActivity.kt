@@ -1,5 +1,6 @@
 package com.usher.demo.order
 
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -12,7 +13,9 @@ import com.usher.demo.api.entities.CartItemEntity
 import com.usher.demo.base.BaseActivity
 import com.usher.demo.order.fragment.OrderDeliveryFragment
 import com.usher.demo.order.fragment.OrderPickupFragment
+import com.usher.demo.util.PermissionUtil
 import com.usher.demo.util.RxUtil
+import com.usher.demo.zxing.QRCaptureActivity
 import kotlinx.android.synthetic.main.activity_order.*
 import kotlinx.android.synthetic.main.order_pay_layout.*
 import kotlinx.android.synthetic.main.title_layout.*
@@ -33,6 +36,12 @@ class OrderActivity : BaseActivity(R.layout.activity_order, Theme.LIGHT_AUTO) {
         val totalPrice = mCartItems.map { it.unitPrice * it.buyNum }.reduceOrNull { acc, price -> acc + price }?.run { String.format("%.2f", this) }
                 ?: "0.00"
         price_textview.text = getString(R.string.order_price, totalPrice)
+
+        submit_text.clicks()
+                .compose(RxUtil.singleClick())
+                .switchMap { PermissionUtil.requestPermission(this, Constants.PERMISSION_USE_CAMERA).take(1).filter { it } }
+                .to(RxUtil.autoDispose(this))
+                .subscribe { startActivity(Intent(this, QRCaptureActivity::class.java)) }
     }
 
     private fun initTitleView() {

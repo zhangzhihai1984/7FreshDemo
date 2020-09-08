@@ -12,6 +12,12 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-feature android:name="android.hardware.wifi" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -59,6 +65,12 @@
 
         <activity
             android:name=".order.OrderActivity"
+            android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoStatusBarTheme" />
+
+        <activity
+            android:name=".zxing.QRCaptureActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/NoStatusBarTheme" />

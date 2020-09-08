@@ -71,4 +71,9 @@
     <string name="order_stockout">商品若缺货</string>
     <string name="order_stockout_desc">其它商品继续配送（缺货商品退款）</string>
 
+    <!-- QR -->
+    <string name="qr_capture_title">扫一扫</string>
+    <string name="qr_capture_manual">对准二维码/条形码到框内即可扫描</string>
+    <string name="qr_capture_invalid">扫描失败，请使用正确的二维码</string>
+
 </resources>
