@@ -16,6 +16,7 @@ import com.usher.demo.util.LogUtil
 import com.usher.demo.util.RxUtil
 import com.usher.demo.widget.dialog.CommonDialog
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_cart.*
 import kotlinx.android.synthetic.main.cart_pay_layout.*
 import kotlinx.android.synthetic.main.item_cart.view.*
@@ -23,11 +24,12 @@ import kotlinx.android.synthetic.main.title_layout.*
 import java.util.concurrent.TimeUnit
 
 class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
+    private val mItemBatchDeletes = PublishSubject.create<Unit>()
     private val mCartItems = ArrayList<CartItemEntity>()
     private val mAdapter by lazy { CartAdapter(mCartItems) }
 
     /**
-     * 删除item对话框:
+     * 删除item确认对话框:
      * 1. 如果确认删除, 移除当前item
      * 2. 如果确认删除, 如果购物车为空则显示empty_layout
      */
@@ -43,6 +45,24 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .map { Unit }
     }
 
+    /**
+     * 批量删除item确认对话框:
+     * 1. 如果确认删除, 移除status为选中的item
+     * 2. 如果确认删除, 如果购物车为空则显示empty_layout
+     */
+    val batchDeleteWarns: () -> Observable<Unit> = {
+        val checkedItems = mCartItems.filter { it.status > 0 }
+        CommonDialog(this)
+                .withContent(getString(R.string.cart_delete_batch_warn, checkedItems.size))
+                .withDialogType(CommonDialog.ButtonType.DOUBLE_WARN)
+                .confirms()
+                .doOnNext {
+                    mCartItems.removeAll(checkedItems)
+                    showEmptyLayoutIfNeeded()
+                }
+                .map { Unit }
+    }
+
     override fun initView() {
         initTitleView()
 
@@ -50,22 +70,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
         cart_recyclerview.adapter = mAdapter
 
         /**
-         * check item
-         * delete item
-         * add item buyNum
-         * minus item buyNum
-         *
-         * check all
-         * delete all (status > 0)
-         *
-         * notifyDataSetChanged
-         * updateBatchLayout (TBD)
-         * updatePayLayout (total price & pay count)
-         */
-
-
-        /**
-         * 点击item的checkbox:
+         * 选中item:
          * 1. 更新item的status
          */
         val itemChecks = mAdapter.itemChildClicks()
@@ -78,7 +83,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
 
 
         /**
-         * 点击item的"+"
+         * 增加item购买数量:
          * 1. item的购买数量+1
          * 2. 更新item的status为选中
          */
@@ -94,7 +99,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .map { Unit }
 
         /**
-         * 点击item的"-"
+         * 减少item购买数量:
          * 1. 如果item购买数量>1, item的购买数量-1, 更新item的status为选中
          * 2. 如果item购买数量=1, 弹出删除确认对话框
          */
@@ -115,7 +120,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 }
 
         /**
-         * 点击item的"删除"
+         * 删除item:
          * 1. 弹出删除确认对话框
          */
         val itemDeletes = mAdapter.itemChildClicks()
@@ -127,44 +132,57 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                 .map { Unit }
 
         /**
-         * 点击"全选":
+         * 全选/全不选item:
          * 1. 更新所有item的status
          */
         val allChecks = all_layout.clicks()
                 .compose(RxUtil.singleClick())
                 .doOnNext { mCartItems.forEach { it.status = if (all_checkbox.isChecked) 0 else 1 } }
 
-        Observable.mergeArray(itemChecks, allChecks, itemAdds, itemLess, itemDeletes)
+        /**
+         * 获取购物车数据:
+         * 1. 更新购物车数据
+         * 2. 如果购物车为空则显示empty_layout
+         *
+         * 注:由于提供的数据只有一个item, 不利于删除和全选等功能的展现, 因此这里通过重发请求增加若干item
+         */
+        val getCartData = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
+                .take(3)
+                .flatMap { ApiFactory.instance.getCart() }
+                .doOnNext { result ->
+                    result.data?.run {
+                        LogUtil.log("data: ${Gson().toJson(this)}")
+
+//                        mCartItems.clear()
+                        mCartItems.addAll(cartItems)
+                        showEmptyLayoutIfNeeded()
+                    } ?: run {
+                        showToast("数据获取失败")
+                        finish()
+                    }
+                }
+                .map { Unit }
+
+        /**
+         * 1. 获取购物车数据
+         * 2. 选中item
+         * 3. 增加item购买数量
+         * 4. 减少item购买数量
+         * 5. 删除item
+         * 6. 全选/全不选item
+         * 7. 批量删除item
+         *
+         * 以上操作均会触发如下处理:
+         * 1. 更新adapter
+         * 2. 更新"全选"及批量"删除"状态
+         * 3. 更新合计价钱及结算数量
+         */
+        Observable.mergeArray(getCartData, itemChecks, itemAdds, itemLess, itemDeletes, allChecks, mItemBatchDeletes)
                 .to(RxUtil.autoDispose(this))
                 .subscribe {
                     mAdapter.notifyDataSetChanged()
                     updateBatchLayout()
                     updatePayLayout()
-                }
-
-
-        /**
-         * 由于提供的数据只有一个item, 不利于删除和全选等功能的展现, 因此这里通过重发请求增加若干item
-         */
-        Observable.interval(0, 100, TimeUnit.MILLISECONDS)
-                .take(3)
-                .flatMap { ApiFactory.instance.getCart() }
-                .to(RxUtil.autoDispose(this))
-                .subscribe { result ->
-                    result.data?.let { cartEntity ->
-                        LogUtil.log("data: ${Gson().toJson(cartEntity)}")
-
-//                        mCartItems.clear()
-                        mCartItems.addAll(cartEntity.cartItems)
-
-                        mAdapter.notifyDataSetChanged()
-
-                        showEmptyLayoutIfNeeded()
-                        updateBatchLayout()
-                        updatePayLayout()
-                    } ?: run {
-                        finish()
-                    }
                 }
     }
 
@@ -176,27 +194,16 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
 
         center_textview.text = getString(R.string.cart_title)
         end_textview.text = getString(R.string.cart_delete)
+
+        /**
+         * 批量删除item:
+         * 1. 弹出批量删除确认对话框
+         */
         end_textview.clicks()
                 .compose(RxUtil.singleClick())
-                .switchMap {
-                    val checkedItems = mCartItems.filter { it.status > 0 }
-
-                    CommonDialog(this)
-                            .withContent(getString(R.string.cart_delete_batch_warn, checkedItems.size))
-                            .withDialogType(CommonDialog.ButtonType.DOUBLE_WARN)
-                            .confirms()
-                            .doOnNext {
-                                mCartItems.removeAll(checkedItems)
-                                mAdapter.notifyDataSetChanged()
-
-                                showEmptyLayoutIfNeeded()
-
-                                updateBatchLayout()
-                                updatePayLayout()
-                            }
-                }
+                .switchMap { batchDeleteWarns() }
                 .to(RxUtil.autoDispose(this))
-                .subscribe {}
+                .subscribe { mItemBatchDeletes.onNext(Unit) }
     }
 
     private fun showEmptyLayoutIfNeeded() {
@@ -205,8 +212,8 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
     }
 
     /**
-     * 1. 顶部"删除"显示与否
-     * 2. 底部"全选"选中状态
+     * 1. 更新顶部"删除"显示与否
+     * 2. 更新底部"全选"选中状态
      */
     private fun updateBatchLayout() {
         end_textview.visibility = mCartItems.find { it.status > 0 }?.run { View.VISIBLE }
