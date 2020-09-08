@@ -36,7 +36,12 @@ class OrderDeliveryFragment : BaseNavigationFragment(R.layout.fragment_order_del
         address_layout.clicks()
                 .compose(RxUtil.singleClick())
                 .to(RxUtil.autoDispose(this))
-                .subscribe { showToast("更换地址") }
+                .subscribe { showToast("查看地址") }
+
+        coupon_layout.clicks()
+                .compose(RxUtil.singleClick())
+                .to(RxUtil.autoDispose(this))
+                .subscribe { showToast("查看优惠券") }
 
     }
 }
