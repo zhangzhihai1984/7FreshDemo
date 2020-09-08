@@ -8,7 +8,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include layout="@layout/order_address_layout" />
+        <include
+            android:id="@+id/address_layout"
+            layout="@layout/order_address_layout" />
 
     </LinearLayout>
 
