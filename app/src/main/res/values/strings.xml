@@ -55,4 +55,7 @@
     <string name="order_phone">135****4520</string>
     <string name="order_address">北京经济技术开发区1号楼101</string>
 
+    <string name="order_store_pre">7FRESH</string>
+    <string name="order_store">大族广场店</string>
+
 </resources>

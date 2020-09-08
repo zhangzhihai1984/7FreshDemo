@@ -12,6 +12,8 @@
             android:id="@+id/address_layout"
             layout="@layout/order_address_layout" />
 
+        <include layout="@layout/order_store_layout" />
+
     </LinearLayout>
 
 </ScrollView>
