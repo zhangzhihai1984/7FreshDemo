@@ -23,7 +23,7 @@
             android:layout_marginStart="8dp"
             android:contentDescription="@null"
             android:padding="2dp"
-            android:src="@drawable/ic_back_dark" />
+            android:src="@drawable/ic_back" />
 
         <ImageView
             android:id="@+id/end_imageview"
