@@ -192,11 +192,11 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
          * 去结算
          */
         pay_textview.clicks()
-                .take(1)
+                .compose(RxUtil.singleClick())
                 .to(RxUtil.autoDispose(this))
                 .subscribe {
                     startActivity(Intent(this, OrderActivity::class.java).apply {
-                        putExtra(Constants.TAG_DATA, Gson().toJson(mCartItems))
+                        putExtra(Constants.TAG_DATA, Gson().toJson(mCartItems.filter { it.status > 0 }))
                     })
                 }
     }

@@ -47,6 +47,8 @@
     <string name="order_title">确认订单</string>
     <string name="order_home">配送到家</string>
     <string name="order_self">到点自取</string>
+    <string name="order_price_desc">实付款:</string>
+    <string name="order_price">¥%1$s</string>
     <string name="order_submit">提交订单</string>
 
 </resources>
