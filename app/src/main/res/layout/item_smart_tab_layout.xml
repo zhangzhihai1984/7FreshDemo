@@ -5,7 +5,7 @@
     android:layout_height="45dp"
     android:layout_weight="1"
     android:gravity="center"
-    android:textColor="@color/text_tab"
+    android:textColor="@color/smart_tab_color"
     android:textSize="13sp">
 
 </TextView>

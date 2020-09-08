@@ -10,22 +10,34 @@
         android:id="@+id/title_layout"
         layout="@layout/title_layout" />
 
-    <com.ogaclejapan.smarttablayout.SmartTabLayout
-        android:id="@+id/tablayout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        app:stl_customTabTextLayoutId="@layout/item_smart_tab_layout"
-        app:stl_customTabTextViewId="@id/textview"
-        app:stl_dividerColor="@android:color/transparent"
-        app:stl_indicatorColor="@color/text_tab"
-        app:stl_indicatorCornerRadius="1dp"
-        app:stl_indicatorGravity="bottom"
-        app:stl_indicatorInterpolation="smart"
-        app:stl_indicatorThickness="3dp"
-        app:stl_indicatorWidth="55dp"
-        app:stl_indicatorWithoutPadding="true"
-        app:stl_underlineColor="@android:color/transparent" />
+        android:layout_height="45dp"
+        android:background="@android:color/white">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/page_background" />
+
+        <com.ogaclejapan.smarttablayout.SmartTabLayout
+            android:id="@+id/tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:stl_customTabTextLayoutId="@layout/item_smart_tab_layout"
+            app:stl_customTabTextViewId="@id/textview"
+            app:stl_dividerColor="@android:color/transparent"
+            app:stl_indicatorColor="@color/text_tab"
+            app:stl_indicatorCornerRadius="1dp"
+            app:stl_indicatorGravity="bottom"
+            app:stl_indicatorInterpolation="smart"
+            app:stl_indicatorThickness="3dp"
+            app:stl_indicatorWidth="55dp"
+            app:stl_indicatorWithoutPadding="true"
+            app:stl_underlineColor="@android:color/transparent" />
+
+    </RelativeLayout>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/order_viewpager"

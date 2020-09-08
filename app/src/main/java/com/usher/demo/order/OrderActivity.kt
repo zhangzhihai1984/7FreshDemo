@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jakewharton.rxbinding4.view.clicks
-import com.jakewharton.rxbinding4.viewpager.pageSelections
 import com.usher.demo.Constants
 import com.usher.demo.R
 import com.usher.demo.api.entities.CartItemEntity
@@ -30,12 +29,6 @@ class OrderActivity : BaseActivity(R.layout.activity_order, Theme.LIGHT_AUTO) {
 
         order_viewpager.adapter = OrderFragmentAdapter(supportFragmentManager)
         tablayout.setViewPager(order_viewpager)
-
-        order_viewpager.pageSelections()
-                .to(RxUtil.autoDispose(this))
-                .subscribe { position ->
-
-                }
 
         val totalPrice = mCartItems.map { it.unitPrice * it.buyNum }.reduceOrNull { acc, price -> acc + price }?.run { String.format("%.2f", this) }
                 ?: "0.00"
