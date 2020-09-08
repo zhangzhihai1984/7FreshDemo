@@ -27,7 +27,7 @@ class OrderActivity : BaseActivity(R.layout.activity_order, Theme.LIGHT_AUTO) {
     override fun initView() {
         initTitleView()
 
-        order_viewpager.adapter = OrderFragmentAdapter(supportFragmentManager)
+        order_viewpager.adapter = OrderFragmentAdapter(supportFragmentManager, mCartItems)
         tablayout.setViewPager(order_viewpager)
 
         val totalPrice = mCartItems.map { it.unitPrice * it.buyNum }.reduceOrNull { acc, price -> acc + price }?.run { String.format("%.2f", this) }
@@ -44,9 +44,9 @@ class OrderActivity : BaseActivity(R.layout.activity_order, Theme.LIGHT_AUTO) {
         center_textview.text = getString(R.string.order_title)
     }
 
-    private class OrderFragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private class OrderFragmentAdapter(fm: FragmentManager, private val data: List<CartItemEntity>) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-        override fun getItem(position: Int): Fragment = if (position == 0) OrderDeliveryFragment.newInstance() else OrderPickupFragment.newInstance()
+        override fun getItem(position: Int): Fragment = if (position == 0) OrderDeliveryFragment.newInstance(data) else OrderPickupFragment.newInstance()
 
         override fun getCount(): Int = 2
 
