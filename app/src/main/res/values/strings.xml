@@ -57,5 +57,8 @@
 
     <string name="order_store_pre">7FRESH</string>
     <string name="order_store">大族广场店</string>
+    
+    <string name="order_total_price">商品总额</string>
+    <string name="order_shipping_price">运费</string>
 
 </resources>
