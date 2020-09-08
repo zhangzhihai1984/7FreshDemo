@@ -43,4 +43,9 @@
     <string name="cart_empty">购物车是空的，快去挑选商品吧</string>
     <string name="cart_shopping">去首页逛逛</string>
 
+    <!-- Order -->
+    <string name="order_title">确认订单</string>
+    <string name="order_home">配送到家</string>
+    <string name="order_self">到点自取</string>
+
 </resources>

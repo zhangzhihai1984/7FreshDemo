@@ -1,5 +1,6 @@
 package com.usher.demo.cart
 
+import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -7,11 +8,13 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.google.gson.Gson
 import com.jakewharton.rxbinding4.view.clicks
 import com.squareup.picasso.Picasso
+import com.usher.demo.Constants
 import com.usher.demo.R
 import com.usher.demo.api.ApiFactory
 import com.usher.demo.api.entities.CartItemEntity
 import com.usher.demo.base.BaseActivity
 import com.usher.demo.base.RxBaseQuickAdapter
+import com.usher.demo.order.OrderActivity
 import com.usher.demo.util.LogUtil
 import com.usher.demo.util.RxUtil
 import com.usher.demo.widget.dialog.CommonDialog
@@ -183,6 +186,19 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
                     mAdapter.notifyDataSetChanged()
                     updateBatchLayout()
                     updatePayLayout()
+                }
+
+        /**
+         * 去结算
+         */
+        pay_textview.clicks()
+                .take(1)
+                .to(RxUtil.autoDispose(this))
+                .subscribe {
+                    startActivity(Intent(this, OrderActivity::class.java).apply {
+                        putExtra(Constants.TAG_DATA, Gson().toJson(mCartItems))
+                    })
+                    finish()
                 }
     }
 
