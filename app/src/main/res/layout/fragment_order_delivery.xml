@@ -14,6 +14,10 @@
 
         <include layout="@layout/order_store_layout" />
 
+        <include
+            android:id="@+id/delivery_layout"
+            layout="@layout/order_delivery_layout" />
+
         <include layout="@layout/order_price_layout" />
 
         <include

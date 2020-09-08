@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/order_total_price"
+            android:text="@string/order_price_total"
             android:textColor="@color/text_33"
             android:textSize="12sp" />
 
@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/order_shipping_price"
+            android:text="@string/order_price_shipping"
             android:textColor="@color/text_33"
             android:textSize="12sp" />
 
