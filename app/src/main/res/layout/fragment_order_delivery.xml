@@ -20,6 +20,10 @@
             android:id="@+id/coupon_layout"
             layout="@layout/order_coupon_layout" />
 
+        <include
+            android:id="@+id/stockout_layout"
+            layout="@layout/order_stockout_layout" />
+
     </LinearLayout>
 
 </ScrollView>

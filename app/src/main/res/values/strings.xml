@@ -63,4 +63,7 @@
 
     <string name="order_coupon">优惠券</string>
 
+    <string name="order_stockout">商品若缺货</string>
+    <string name="order_stockout_desc">其它商品继续配送（缺货商品退款）</string>
+
 </resources>

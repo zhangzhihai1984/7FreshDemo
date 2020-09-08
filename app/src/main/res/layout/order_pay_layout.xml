@@ -19,7 +19,7 @@
             android:layout_marginStart="16dp"
             android:text="@string/order_price_desc"
             android:textColor="@color/text_33"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/price_textview"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textColor="@color/colorWarn"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             tools:text="¥29.70" />
 
