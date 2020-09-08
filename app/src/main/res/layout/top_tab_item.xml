@@ -11,7 +11,6 @@
         android:layout_centerInParent="true"
         android:textColor="@color/text_teal"
         android:textSize="12sp"
-        android:textStyle="bold"
         tools:text="@string/top_tab_product" />
 
     <View

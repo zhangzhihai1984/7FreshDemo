@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="45dp"
+    android:layout_height="42dp"
     android:background="@android:color/white">
 
     <View
@@ -23,8 +23,8 @@
 
             <ImageView
                 android:id="@+id/cart_imageview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:layout_centerInParent="true"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_cart" />
@@ -34,13 +34,14 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_below="@id/cart_imageview"
-                android:layout_marginStart="-8dp"
-                android:layout_marginTop="-30dp"
+                android:layout_marginStart="-6dp"
+                android:layout_marginTop="-26dp"
                 android:layout_toEndOf="@id/cart_imageview"
                 android:background="@drawable/ic_reminder"
                 android:gravity="center"
                 android:textColor="@color/text_F0"
                 android:textSize="10sp"
+                tools:visibility="visible"
                 android:visibility="invisible"
                 tools:ignore="SmallSp" />
 
