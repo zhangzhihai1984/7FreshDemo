@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.usher.demo"
-        minSdkVersion 28
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
