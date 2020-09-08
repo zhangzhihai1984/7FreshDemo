@@ -150,7 +150,7 @@ class CartActivity : BaseActivity(R.layout.activity_cart, Theme.LIGHT_AUTO) {
          * 注:由于提供的数据只有一个item, 不利于删除和全选等功能的展现, 因此这里通过重发请求增加若干item
          */
         val getCartData = Observable.interval(0, 100, TimeUnit.MILLISECONDS)
-                .take(3)
+                .take(4)
                 .flatMap { ApiFactory.instance.getCart() }
                 .doOnNext { result ->
                     result.data?.run {

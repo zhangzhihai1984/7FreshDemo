@@ -58,13 +58,13 @@
     <string name="order_store_pre">7FRESH</string>
     <string name="order_store">大族广场店</string>
 
-    <string name="order_">立即配送</string>
+    <string name="order_delivery_instant">立即配送</string>
+    <string name="order_delivery_time">请选择送达时间</string>
+
+    <string name="order_product_count">共%1$d种</string>
 
     <string name="order_price_total">商品总额</string>
     <string name="order_price_shipping">运费</string>
-
-    <string name="order_delivery_instant">立即配送</string>
-    <string name="order_delivery_time">请选择送达时间</string>
 
     <string name="order_coupon">优惠券</string>
 
