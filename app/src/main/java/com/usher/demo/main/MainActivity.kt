@@ -3,7 +3,6 @@ package com.usher.demo.main
 import android.content.Intent
 import android.view.KeyEvent
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.jakewharton.rxbinding4.view.clicks
 import com.usher.demo.CommonWebActivity
@@ -27,12 +26,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
         private const val EXIT_DURATION = 1000
     }
 
-    private val mFragmentMap = hashMapOf<String, Fragment>().apply {
-        this[Constants.TAB_TAG_PRODUCT] = MainProductFragment.newInstance()
-        this[Constants.TAB_TAG_COMMENT] = MainCommentFragment.newInstance()
-        this[Constants.TAB_TAG_DETAIL] = MainDetailFragment.newInstance()
-        this[Constants.TAB_TAG_RECOMMEND] = MainRecomendFragment.newInstance()
-    }
     private val mBackClicks = PublishSubject.create<Unit>()
 
     private var mCartItemCount = 0
@@ -52,29 +45,27 @@ class MainActivity : BaseActivity(R.layout.activity_main, Theme.LIGHT_AUTO) {
     }
 
     private fun initTabView() {
+        val fragmentMap = mapOf(
+                Constants.TAB_TAG_PRODUCT to MainProductFragment.newInstance(),
+                Constants.TAB_TAG_COMMENT to MainCommentFragment.newInstance(),
+                Constants.TAB_TAG_DETAIL to MainDetailFragment.newInstance(),
+                Constants.TAB_TAG_RECOMMEND to MainRecomendFragment.newInstance()
+        )
+
         val fragmentHides: (transaction: FragmentTransaction, tag: String) -> Observable<Unit> = { transaction, tag ->
-            Observable.fromIterable(mFragmentMap.keys)
+            Observable.fromIterable(fragmentMap.keys)
                     .filter { key -> key != tag }
-                    .map { key ->
-                        mFragmentMap[key]?.let { fragment ->
-                            supportFragmentManager.findFragmentByTag(key)?.run {
-                                transaction.hide(fragment)
-                            }
-                        }
-                        Unit
-                    }
+                    .doOnNext { key -> supportFragmentManager.findFragmentByTag(key)?.run { transaction.hide(this) } }
+                    .map { Unit }
         }
 
         val fragmentShows: (transaction: FragmentTransaction, tag: String) -> Observable<Unit> = { transaction, tag ->
             Observable.just(Unit)
-                    .map {
-                        mFragmentMap[tag]?.let { fragment ->
-                            supportFragmentManager.findFragmentByTag(tag)?.run {
-                                transaction.show(fragment)
-                            } ?: transaction.add(R.id.main_content_view, fragment, tag)
-                        }
-                        Unit
+                    .doOnNext {
+                        supportFragmentManager.findFragmentByTag(tag)?.run { transaction.show(this) }
+                                ?: fragmentMap[tag]?.run { transaction.add(R.id.main_content_view, this, tag) }
                     }
+                    .map { Unit }
         }
 
         val fragmentNavigates: (transaction: FragmentTransaction, tag: String) -> Observable<Unit> = { transaction, tag ->
