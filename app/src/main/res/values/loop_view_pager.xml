@@ -2,6 +2,6 @@
 <resources>
     <declare-styleable name="LoopViewPager">
         <attr name="pager_autopage_enabled" format="boolean" />
-        <attr name="pager_autopage_interval" format="integer" />
+        <attr name="pager_autopage_period" format="integer" />
     </declare-styleable>
 </resources>

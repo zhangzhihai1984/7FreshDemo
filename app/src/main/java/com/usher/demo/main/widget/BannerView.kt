@@ -52,7 +52,7 @@ class BannerView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         override fun getCount(): Int = data.size
 
         override fun getItem(position: Int): Fragment {
-            val pos = LoopViewPager.getMatchedPosition(position, count)
+            val pos = LoopViewPager.getRevisedPosition(position, count)
             return BannerFragment.newInstance(data[pos])
         }
     }
