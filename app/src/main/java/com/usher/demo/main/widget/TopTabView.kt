@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.lifecycle.LifecycleOwner
 import com.jakewharton.rxbinding4.view.clicks
@@ -52,10 +53,10 @@ class TopTabView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         children.forEachIndexed { i, view ->
             if (tag == view.tag) {
-                view.tab_textview.setTextColor(context.getColor(R.color.text_teal))
+                view.tab_textview.setTextColor(ContextCompat.getColor(context, R.color.text_teal))
                 view.indicator_view.visibility = View.VISIBLE
             } else {
-                view.tab_textview.setTextColor(context.getColor(R.color.text_4A))
+                view.tab_textview.setTextColor(ContextCompat.getColor(context, R.color.text_4A))
                 view.indicator_view.visibility = View.INVISIBLE
             }
         }

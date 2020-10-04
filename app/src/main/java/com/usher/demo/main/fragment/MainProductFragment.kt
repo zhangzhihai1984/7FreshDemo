@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import com.google.gson.Gson
 import com.jakewharton.rxbinding4.view.clicks
-import com.jakewharton.rxbinding4.view.scrollChangeEvents
 import com.usher.demo.R
 import com.usher.demo.api.ApiFactory
 import com.usher.demo.base.BaseNavigationFragment
@@ -23,10 +22,10 @@ class MainProductFragment : BaseNavigationFragment(R.layout.fragment_main_produc
     @SuppressLint("SetJavaScriptEnabled")
     override fun init() {
         //TODO: when to show "return to top"
-        scrollview.scrollChangeEvents()
-                .map { it.scrollY }
-                .to(RxUtil.autoDispose(this))
-                .subscribe { }
+//        scrollview.scrollChangeEvents()
+//                .map { it.scrollY }
+//                .to(RxUtil.autoDispose(this))
+//                .subscribe { }
 
         top_textview.clicks()
                 .compose(RxUtil.singleClick())
